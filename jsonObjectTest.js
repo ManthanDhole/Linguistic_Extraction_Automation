@@ -27,19 +27,27 @@
 //     console.log("hai")        
 // }
 
-let resourceFormat = '<data name="##WidgetID_ResourceKey##" xml:space="preserve">\n<value>##ResourceValue##</value>\n<comment>##Comment##</comment>\n</data>'
+// let resourceFormat = '<data name="##WidgetID_ResourceKey##" xml:space="preserve">\n<value>##ResourceValue##</value>\n<comment>##Comment##</comment>\n</data>'
 
-let data = '{"widgetTitle":"Banner","widgetDescription":"Banner sample widget.","chartType":"Chart type","area":"Area","bar":"Bar","donut":"Donut","pie":"Pie","column":"Column","data":"Data"}'
+// let data = '{"widgetTitle":"Banner","widgetDescription":"Banner sample widget.","chartType":"Chart type","area":"Area","bar":"Bar","donut":"Donut","pie":"Pie","column":"Column","data":"Data"}'
 
-console.log(data);
-let parsed = JSON.parse(data);
-// let enUSData = parsed.localization["en-US"]
-// console.log(typeof(enUSData));
+// console.log(data);
+// let parsed = JSON.parse(data);
+// // let enUSData = parsed.localization["en-US"]
+// // console.log(typeof(enUSData));
 
 
-for(const item in parsed)
-{
-    console.log(item + ": " + parsed[item])
-    var resource = resourceFormat.replace("##WidgetID_ResourceKey##", item).replace("##ResourceValue##", parsed[item])
-    // console.log(resource)
-}
+// for(const item in parsed)
+// {
+//     console.log(item + ": " + parsed[item])
+//     var resource = resourceFormat.replace("##WidgetID_ResourceKey##", item).replace("##ResourceValue##", parsed[item])
+//     // console.log(resource)
+// }
+
+// console.log(process.argv[0])
+// console.log(process.argv[1])
+// console.log(process.argv[2])
+
+console.log('Hello');
+setTimeout(() => {  }, 2000);
+console.log('Goodbye!');

@@ -1,11 +1,81 @@
 const fs = require('fs');
 
+//Command to run the script
+//node folderManipulation.js en-US "C:\Portal\DevOps\Linguistics_Scripting\widget-sdk_master-11-28-2023\widget-sdk\Infor_WidgetSDK_3.28.0\Samples\Widgets" "C:\Portal\DevOps\Linguistics_Scripting\widget-sdk_master-11-28-2023\widget-sdk\Infor_WidgetSDK_3.28.0\Samples\Translations\New\widget-en_US.resx"  
 
 
-let resourceFormat = '<data name="##WidgetID_ResourceKey##" xml:space="preserve">\n\t<value>##ResourceValue##</value>\n\t<comment>##Comment##</comment>\n</data>\n'
+let outputFileContent = `<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>`;
+
+
+  outputFileContentEndLines = `
+  </root>
+`;
+
 let allResources = "";
-let directorypath = "C:\\Portal\\DevOps\\Linguistics_Scripting\\widget-sdk_master-11-28-2023\\widget-sdk\\Infor_WidgetSDK_3.28.0\\Samples\\Widgets";
-let outputFileLocation = "C:\\Portal\\DevOps\\Linguistics_Scripting\\widget-sdk_master-11-28-2023\\widget-sdk\\Infor_WidgetSDK_3.28.0\\Samples\\Translations\\New\\widget-en_US.resx"
+
+let languageCode = process.argv[2];
+let directorypath = process.argv[3];
+let outputFileLocation = process.argv[4];
+
 fs.readdir(directorypath, (err, files) => {
     if(err)
     {
@@ -20,18 +90,39 @@ fs.readdir(directorypath, (err, files) => {
 
 function printOnlyangularFiles(allFiles)
 {
-    // console.log(allFiles);
+    //Write the initial content in the file
+    if(fs.existsSync(outputFileLocation))
+    {
+        fs.appendFile(outputFileLocation, outputFileContent, (err) => {
+            if(err)
+            {
+                console.log(err)
+            }
+        });
+    }
+
+    //Write the Key and values in the file
     allFiles.forEach(file => {
         // nameContains = "infor.sample.angular.banner";
         nameContains = "infor.sample";
         if(file.includes(nameContains))
         {
-            // console.log(file);
             var manifestFilePath = directorypath + '\\' + file + '\\widget.manifest';
-            // console.log(manifestFilePath)
             readDataFromManifestFile(manifestFilePath, file)
         }
     });
+
+    //Write the final/ending content in the file
+    setTimeout(() => { 
+        console.log("Exporting Resources to location " + outputFileLocation + ". Please wait for the program to finish.")
+        fs.appendFile(outputFileLocation, outputFileContentEndLines, (err) => {
+            if(err)
+            {
+                console.log(err)
+            }
+        });
+     }, 2000);
+
 }
 
 function readDataFromManifestFile(filepath, filename)
@@ -49,33 +140,24 @@ function readDataFromManifestFile(filepath, filename)
 function extract_enUS_fromLocalizationJson(jsonStringData, filename)
 {
     let jsonData = JSON.parse(jsonStringData);
-    // console.log(jsonData);
     try
     {
-        if(jsonData.localization["en-US"] !== undefined)
+        if(jsonData.localization[languageCode] !== undefined)
         {
-            // console.log("File Name: " + filename);
-            console.log(jsonData.localization["en-US"]);
-            var jsonDataToString = JSON.stringify(jsonData.localization["en-US"])
+            var jsonDataToString = JSON.stringify(jsonData.localization[languageCode])
             outputManifestToDirectory(filename, jsonDataToString)
         }
-        // console.log("---------------------");
     }
     catch(exception)
     {
-        console.log(exception)
+        console.error(exception)
     }
 }
 
 
 function outputManifestToDirectory(filename, manifestKeyValues)
 {
-    // manifestKeyValues = manifestKeyValues.slice(1, manifestKeyValues.length-1);
-    // manifestKeyValues = manifestKeyValues.replaceAll(",", "\n").replace('\":\"', '\": \"');
-    // let dataToAppend = "FileName: " + filename + "\n" + manifestKeyValues + "\n\n";
-
     let dataToAppend = formatDataTo_RESXStructure(filename, manifestKeyValues);
-
     if(fs.existsSync(outputFileLocation))
     {
         fs.appendFile(outputFileLocation, dataToAppend, (err) => {
@@ -85,6 +167,7 @@ function outputManifestToDirectory(filename, manifestKeyValues)
             }
         });
     }
+    
 }
 
 function formatDataTo_RESXStructure(widgetId, manifestKeyValues, comment)
@@ -94,20 +177,26 @@ function formatDataTo_RESXStructure(widgetId, manifestKeyValues, comment)
     {
         for(const item in keyValues)
         {
-            // console.log(item)
             let resourceName = widgetId + "_" + item;
-            let formattedData = resourceFormat.replace("##WidgetID_ResourceKey##", resourceName).replace("##ResourceValue##", keyValues[item]);
+            let resourceValue = keyValues[item];
+            let formattedData;
             if(comment)
             {
-                formattedData = formattedData.replace("##Comment##", comment);
+                formattedData = `
+        <data name="${resourceName}" xml:space="preserve">
+            <value>${resourceValue}</value>
+            <comment>${comment}</comment>
+        </data>`;
             }
             else
             {
-                formattedData = formattedData.replace("##Comment##", "No Comment");
+                formattedData = `
+        <data name="${resourceName}" xml:space="preserve">
+            <value>${keyValues[item]}</value>
+        </data>`;
             }
             allResources += formattedData;
         }
-        // console.log(allResources);
         return allResources;
     }
     catch(ex)
