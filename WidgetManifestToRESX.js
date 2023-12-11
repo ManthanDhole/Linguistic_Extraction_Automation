@@ -150,7 +150,7 @@ function extract_enUS_fromLocalizationJson(jsonStringData, filename)
     }
     catch(exception)
     {
-        console.error(exception)
+        console.error(exception);
     }
 }
 
@@ -163,7 +163,7 @@ function outputManifestToDirectory(filename, manifestKeyValues)
         fs.appendFile(outputFileLocation, dataToAppend, (err) => {
             if(err)
             {
-                console.log(err)
+                console.log(err);
             }
         });
     }
